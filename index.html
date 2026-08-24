@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dabase • File Storage</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #ffffff;
+    }
+
+    header {
+      padding: 30px;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    header p {
+      color: #8b949e;
+      margin-bottom: 0;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background: #161b22;
+      color: white;
+      font-size: 16px;
+    }
+
+    .file {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 18px;
+      margin-bottom: 10px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .icon {
+      font-size: 25px;
+    }
+
+    .filename {
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .type {
+      color: #8b949e;
+      font-size: 13px;
+    }
+
+    .download {
+      background: #238636;
+      color: white;
+      text-decoration: none;
+      padding: 9px 14px;
+      border-radius: 7px;
+      white-space: nowrap;
+    }
+
+    .download:hover {
+      background: #2ea043;
+    }
+
+    #status {
+      color: #8b949e;
+      margin-bottom: 15px;
+    }
+
+    footer {
+      text-align: center;
+      color: #8b949e;
+      padding: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>📦 Dabase</h1>
+  <p>File storage and downloads</p>
+</header>
+
+<main>
+
+  <input
+    class="search"
+    id="search"
+    type="text"
+    placeholder="Search files..."
+  >
+
+  <div id="status">
+    Loading files...
+  </div>
+
+  <div id="files"></div>
+
+</main>
+
+<footer>
+  Dabase • Powered by GitHub
+</footer>
+
+<script>
+
+  /*
+    CHANGE THESE
+  */
+
+  const USERNAME = "YOUR_GITHUB_USERNAME";
+  const REPO = "dabase";
+  const BRANCH = "main";
+
+
+  const API_URL =
+    `https://api.github.com/repos/${USERNAME}/${REPO}/git/trees/${BRANCH}?recursive=1`;
+
+
+  const filesContainer =
+    document.getElementById("files");
+
+  const status =
+    document.getElementById("status");
+
+  const search =
+    document.getElementById("search");
+
+
+  let allFiles = [];
+
+
+  function getIcon(filename) {
+
+    const extension =
+      filename.split(".").pop().toLowerCase();
+
+    const icons = {
+      txt: "📄",
+      json: "⚙️",
+      bat: "🖥️",
+      exe: "📦",
+      zip: "🗜️",
+      rar: "🗜️",
+      html: "🌐",
+      css: "🎨",
+      js: "📜",
+      py: "🐍",
+      md: "📝",
+      png: "🖼️",
+      jpg: "🖼️",
+      jpeg: "🖼️",
+      gif: "🖼️"
+    };
+
+    return icons[extension] || "📄";
+  }
+
+
+  function getExtension(filename) {
+
+    const parts =
+      filename.split(".");
+
+    if (parts.length === 1) {
+      return "FILE";
+    }
+
+    return parts.pop().toUpperCase();
+  }
+
+
+  function displayFiles(files) {
+
+    filesContainer.innerHTML = "";
+
+    if (files.length === 0) {
+
+      filesContainer.innerHTML =
+        "<p>No files found.</p>";
+
+      return;
+    }
+
+
+    files.forEach(file => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "file";
+
+
+      const icon =
+        getIcon(file.path);
+
+      const type =
+        getExtension(file.path);
+
+
+      div.innerHTML = `
+        <div class="file-info">
+
+          <div class="icon">
+            ${icon}
+          </div>
+
+          <div>
+            <div class="filename">
+              ${file.path}
+            </div>
+
+            <div class="type">
+              ${type}
+            </div>
+          </div>
+
+        </div>
+
+        <a
+          class="download"
+          href="${file.download_url}"
+          target="_blank"
+          download
+        >
+          Download
+        </a>
+      `;
+
+
+      filesContainer.appendChild(div);
+
+    });
+
+  }
+
+
+  async function loadFiles() {
+
+    try {
+
+      const response =
+        await fetch(API_URL);
+
+
+      if (!response.ok) {
+        throw new Error(
+          "GitHub API request failed"
+        );
+      }
+
+
+      const data =
+        await response.json();
+
+
+      allFiles =
+        data.tree
+          .filter(item =>
+            item.type === "blob"
+          )
+          .map(item => {
+
+            return {
+              path: item.path,
+
+              download_url:
+                `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${BRANCH}/${item.path}`
+            };
+
+          });
+
+
+      status.textContent =
+        `${allFiles.length} file(s) found`;
+
+
+      displayFiles(allFiles);
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      status.textContent =
+        "Unable to load files.";
+
+    }
+
+  }
+
+
+  search.addEventListener(
+    "input",
+    () => {
+
+      const query =
+        search.value.toLowerCase();
+
+
+      const filtered =
+        allFiles.filter(file =>
+          file.path
+            .toLowerCase()
+            .includes(query)
+        );
+
+
+      displayFiles(filtered);
+
+    }
+  );
+
+
+  loadFiles();
+
+</script>
+
+</body>
+</html>
