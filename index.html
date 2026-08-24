@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dabase • File Storage</title>
+  <title>Dabase</title>
 
   <style>
     * {
@@ -14,97 +14,153 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #0d1117;
-      color: #ffffff;
+      color: white;
     }
 
     header {
-      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 7%;
       background: #161b22;
       border-bottom: 1px solid #30363d;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 32px;
-    }
-
-    header p {
-      color: #8b949e;
-      margin-bottom: 0;
-    }
-
-    main {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    .search {
-      width: 100%;
-      padding: 13px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      border: 1px solid #30363d;
-      background: #161b22;
-      color: white;
-      font-size: 16px;
-    }
-
-    .file {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 18px;
-      margin-bottom: 10px;
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 10px;
-    }
-
-    .file-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .icon {
+    .logo {
       font-size: 25px;
-    }
-
-    .filename {
       font-weight: bold;
-      overflow-wrap: anywhere;
     }
 
-    .type {
-      color: #8b949e;
-      font-size: 13px;
+    .logo span {
+      color: #58a6ff;
     }
 
-    .download {
-      background: #238636;
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 17px;
+      cursor: pointer;
       color: white;
-      text-decoration: none;
-      padding: 9px 14px;
-      border-radius: 7px;
-      white-space: nowrap;
+      background: #238636;
+      font-weight: bold;
     }
 
-    .download:hover {
+    button:hover {
       background: #2ea043;
     }
 
-    #status {
+    .blue {
+      background: #1f6feb;
+    }
+
+    .blue:hover {
+      background: #388bfd;
+    }
+
+    .danger {
+      background: #da3633;
+    }
+
+    main {
+      max-width: 950px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 45px 20px;
+    }
+
+    .hero h1 {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
       color: #8b949e;
-      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .panel {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: white;
+      outline: none;
+      font-size: 16px;
+    }
+
+    input:focus {
+      border-color: #58a6ff;
+    }
+
+    .code-input {
+      text-align: center;
+      font-size: 28px;
+      letter-spacing: 8px;
+    }
+
+    .message {
+      color: #8b949e;
+      margin-top: 12px;
+    }
+
+    .success {
+      color: #3fb950;
+    }
+
+    .error {
+      color: #ff7b72;
+    }
+
+    .file-upload {
+      border: 2px dashed #30363d;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .file-upload p {
+      color: #8b949e;
+    }
+
+    .hidden {
+      display: none;
     }
 
     footer {
       text-align: center;
-      color: #8b949e;
       padding: 40px;
+      color: #8b949e;
+      border-top: 1px solid #30363d;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 15px 20px;
+      }
+
+      .hero h1 {
+        font-size: 38px;
+      }
     }
   </style>
 </head>
@@ -112,243 +168,522 @@
 <body>
 
 <header>
-  <h1>📦 Dabase</h1>
-  <p>File storage and downloads</p>
+
+  <div class="logo">
+    📦 <span>Dabase</span>
+  </div>
+
+  <div>
+
+    <button
+      id="loginButton"
+      class="blue"
+      onclick="showLogin()">
+      Login
+    </button>
+
+    <button
+      id="logoutButton"
+      class="danger hidden"
+      onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
 </header>
+
 
 <main>
 
-  <input
-    class="search"
-    id="search"
-    type="text"
-    placeholder="Search files..."
-  >
+  <section class="hero">
 
-  <div id="status">
-    Loading files...
-  </div>
+    <h1>Dabase</h1>
 
-  <div id="files"></div>
+    <p>
+      Simple file storage for your projects.
+    </p>
+
+  </section>
+
+
+  <!-- LOGIN -->
+
+  <section
+    id="loginPanel"
+    class="panel hidden">
+
+    <h2>Login</h2>
+
+    <input
+      id="loginEmail"
+      type="email"
+      placeholder="Email">
+
+    <input
+      id="loginPassword"
+      type="password"
+      placeholder="Password">
+
+    <button
+      class="blue"
+      onclick="login()">
+      Login
+    </button>
+
+    <button onclick="showSignup()">
+      Create Account
+    </button>
+
+    <p
+      id="loginMessage"
+      class="message">
+    </p>
+
+  </section>
+
+
+  <!-- SIGNUP -->
+
+  <section
+    id="signupPanel"
+    class="panel hidden">
+
+    <h2>Create Account</h2>
+
+    <input
+      id="signupUsername"
+      type="text"
+      placeholder="Username">
+
+    <input
+      id="signupEmail"
+      type="email"
+      placeholder="Email">
+
+    <input
+      id="signupPassword"
+      type="password"
+      placeholder="Password">
+
+    <button
+      class="blue"
+      onclick="signup()">
+      Create Account
+    </button>
+
+    <p
+      id="signupMessage"
+      class="message">
+    </p>
+
+  </section>
+
+
+  <!-- EMAIL VERIFICATION -->
+
+  <section
+    id="verifyPanel"
+    class="panel hidden">
+
+    <h2>📧 Verify Your Email</h2>
+
+    <p>
+      We've sent a 6-digit verification code to:
+    </p>
+
+    <strong id="verificationEmail">
+      your email
+    </strong>
+
+    <input
+      id="verificationCode"
+      class="code-input"
+      type="text"
+      inputmode="numeric"
+      maxlength="6"
+      placeholder="000000">
+
+    <button
+      class="blue"
+      onclick="verifyCode()">
+      Verify Email
+    </button>
+
+    <button
+      onclick="resendCode()">
+      Resend Code
+    </button>
+
+    <p
+      id="verifyMessage"
+      class="message">
+    </p>
+
+  </section>
+
+
+  <!-- DASHBOARD -->
+
+  <section
+    id="dashboard"
+    class="panel hidden">
+
+    <h2>📁 Your Files</h2>
+
+    <p id="accountInfo">
+      Logged in
+    </p>
+
+
+    <div class="file-upload">
+
+      <h3>Upload a File</h3>
+
+      <p>
+        Choose a file to upload to your Dabase account.
+      </p>
+
+      <input
+        id="fileInput"
+        type="file">
+
+      <br><br>
+
+      <button
+        class="blue"
+        onclick="uploadFile()">
+        Upload File
+      </button>
+
+      <p
+        id="uploadMessage"
+        class="message">
+      </p>
+
+    </div>
+
+  </section>
 
 </main>
 
+
 <footer>
-  Dabase • Powered by GitHub
+  Dabase • File Storage
 </footer>
+
 
 <script>
 
-  /*
-    CHANGE THESE
-  */
+/*
+==================================================
+BACKEND CONFIGURATION
+==================================================
 
-  const USERNAME = "YOUR_GITHUB_USERNAME";
-  const REPO = "dabase";
-  const BRANCH = "main";
+Put your public Supabase URL and public/publishable
+key here when you connect your backend.
 
+NEVER put a Supabase service-role key here.
+*/
 
-  const API_URL =
-    `https://api.github.com/repos/${USERNAME}/${REPO}/git/trees/${BRANCH}?recursive=1`;
+const SUPABASE_URL =
+  "YOUR_SUPABASE_URL";
 
-
-  const filesContainer =
-    document.getElementById("files");
-
-  const status =
-    document.getElementById("status");
-
-  const search =
-    document.getElementById("search");
+const SUPABASE_ANON_KEY =
+  "YOUR_SUPABASE_ANON_KEY";
 
 
-  let allFiles = [];
+/*
+==================================================
+SHOW / HIDE PANELS
+==================================================
+*/
 
+function hidePanels() {
 
-  function getIcon(filename) {
-
-    const extension =
-      filename.split(".").pop().toLowerCase();
-
-    const icons = {
-      txt: "📄",
-      json: "⚙️",
-      bat: "🖥️",
-      exe: "📦",
-      zip: "🗜️",
-      rar: "🗜️",
-      html: "🌐",
-      css: "🎨",
-      js: "📜",
-      py: "🐍",
-      md: "📝",
-      png: "🖼️",
-      jpg: "🖼️",
-      jpeg: "🖼️",
-      gif: "🖼️"
-    };
-
-    return icons[extension] || "📄";
-  }
-
-
-  function getExtension(filename) {
-
-    const parts =
-      filename.split(".");
-
-    if (parts.length === 1) {
-      return "FILE";
-    }
-
-    return parts.pop().toUpperCase();
-  }
-
-
-  function displayFiles(files) {
-
-    filesContainer.innerHTML = "";
-
-    if (files.length === 0) {
-
-      filesContainer.innerHTML =
-        "<p>No files found.</p>";
-
-      return;
-    }
-
-
-    files.forEach(file => {
-
-      const div =
-        document.createElement("div");
-
-      div.className = "file";
-
-
-      const icon =
-        getIcon(file.path);
-
-      const type =
-        getExtension(file.path);
-
-
-      div.innerHTML = `
-        <div class="file-info">
-
-          <div class="icon">
-            ${icon}
-          </div>
-
-          <div>
-            <div class="filename">
-              ${file.path}
-            </div>
-
-            <div class="type">
-              ${type}
-            </div>
-          </div>
-
-        </div>
-
-        <a
-          class="download"
-          href="${file.download_url}"
-          target="_blank"
-          download
-        >
-          Download
-        </a>
-      `;
-
-
-      filesContainer.appendChild(div);
-
+  document
+    .querySelectorAll(".panel")
+    .forEach(panel => {
+      panel.classList.add("hidden");
     });
 
+}
+
+
+function showLogin() {
+
+  hidePanels();
+
+  document
+    .getElementById("loginPanel")
+    .classList.remove("hidden");
+
+}
+
+
+function showSignup() {
+
+  hidePanels();
+
+  document
+    .getElementById("signupPanel")
+    .classList.remove("hidden");
+
+}
+
+
+/*
+==================================================
+SIGN UP
+==================================================
+*/
+
+async function signup() {
+
+  const username =
+    document.getElementById("signupUsername").value.trim();
+
+  const email =
+    document.getElementById("signupEmail").value.trim();
+
+  const password =
+    document.getElementById("signupPassword").value;
+
+  const message =
+    document.getElementById("signupMessage");
+
+
+  if (!username || !email || !password) {
+
+    message.textContent =
+      "Please fill out every field.";
+
+    message.className =
+      "message error";
+
+    return;
   }
 
 
-  async function loadFiles() {
+  /*
+    BACKEND TODO:
 
-    try {
-
-      const response =
-        await fetch(API_URL);
-
-
-      if (!response.ok) {
-        throw new Error(
-          "GitHub API request failed"
-        );
-      }
+    1. Create the user.
+    2. Generate a random 6-digit code.
+    3. Store a hashed version of the code.
+    4. Send the code to the email.
+    5. Set an expiration time.
+  */
 
 
-      const data =
-        await response.json();
+  document
+    .getElementById("verificationEmail")
+    .textContent = email;
 
 
-      allFiles =
-        data.tree
-          .filter(item =>
-            item.type === "blob"
-          )
-          .map(item => {
+  hidePanels();
 
-            return {
-              path: item.path,
-
-              download_url:
-                `https://raw.githubusercontent.com/${USERNAME}/${REPO}/${BRANCH}/${item.path}`
-            };
-
-          });
+  document
+    .getElementById("verifyPanel")
+    .classList.remove("hidden");
 
 
-      status.textContent =
-        `${allFiles.length} file(s) found`;
+  message.textContent =
+    "Verification code requested.";
+
+}
 
 
-      displayFiles(allFiles);
+/*
+==================================================
+VERIFY EMAIL
+==================================================
+*/
 
-    }
+async function verifyCode() {
 
-    catch (error) {
+  const code =
+    document
+      .getElementById("verificationCode")
+      .value
+      .trim();
 
-      console.error(error);
+  const message =
+    document.getElementById("verifyMessage");
 
-      status.textContent =
-        "Unable to load files.";
 
-    }
+  if (!/^[0-9]{6}$/.test(code)) {
 
+    message.textContent =
+      "Enter the 6-digit code from your email.";
+
+    message.className =
+      "message error";
+
+    return;
   }
 
 
-  search.addEventListener(
-    "input",
-    () => {
+  /*
+    BACKEND TODO:
 
-      const query =
-        search.value.toLowerCase();
+    Send the code to your backend.
 
+    The backend should:
 
-      const filtered =
-        allFiles.filter(file =>
-          file.path
-            .toLowerCase()
-            .includes(query)
-        );
+    - Check the code.
+    - Check expiration.
+    - Mark the email as verified.
+    - Invalidate the code.
+  */
 
 
-      displayFiles(filtered);
+  message.textContent =
+    "The verification backend has not been connected yet.";
 
-    }
-  );
+  message.className =
+    "message";
+}
 
 
-  loadFiles();
+/*
+==================================================
+RESEND CODE
+==================================================
+*/
+
+async function resendCode() {
+
+  const email =
+    document
+      .getElementById("verificationEmail")
+      .textContent;
+
+  const message =
+    document.getElementById("verifyMessage");
+
+
+  /*
+    BACKEND TODO:
+
+    Ask the backend to generate and send
+    a new verification code.
+  */
+
+
+  message.textContent =
+    "A new verification code will be sent once the email backend is connected.";
+
+}
+
+
+/*
+==================================================
+LOGIN
+==================================================
+*/
+
+async function login() {
+
+  const email =
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("loginPassword")
+      .value;
+
+  const message =
+    document.getElementById("loginMessage");
+
+
+  if (!email || !password) {
+
+    message.textContent =
+      "Please enter your email and password.";
+
+    message.className =
+      "message error";
+
+    return;
+  }
+
+
+  /*
+    BACKEND TODO:
+
+    Authenticate the user with Supabase.
+  */
+
+
+  message.textContent =
+    "Login backend has not been connected yet.";
+
+}
+
+
+/*
+==================================================
+UPLOAD
+==================================================
+*/
+
+async function uploadFile() {
+
+  const file =
+    document
+      .getElementById("fileInput")
+      .files[0];
+
+  const message =
+    document.getElementById("uploadMessage");
+
+
+  if (!file) {
+
+    message.textContent =
+      "Choose a file first.";
+
+    return;
+  }
+
+
+  /*
+    BACKEND TODO:
+
+    Upload the file to private storage
+    belonging to the logged-in user.
+  */
+
+
+  message.textContent =
+    "File storage backend has not been connected yet.";
+
+}
+
+
+/*
+==================================================
+LOGOUT
+==================================================
+*/
+
+function logout() {
+
+  hidePanels();
+
+  document
+    .getElementById("logoutButton")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginButton")
+    .classList.remove("hidden");
+
+}
 
 </script>
 
